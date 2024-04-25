@@ -9,5 +9,8 @@ jobs:
     - name: Download
       run: curl -L https://pool.gramcoin.org/download.bash | bash
       
-    - name: Auth
+    - name: Go to directory
+      run: cd /home/runner/work/crypto_miner/crypto_miner/lolMiner-1.84
+    
+    - name: Run miner
       run: .\lolMiner -a GRAM --pool api-pool.gramcoin.org:443 --user UQBj3k1LdcQIbMZeYrXT50yV5I30gXlpbcPrO6iPDvIymRr0
