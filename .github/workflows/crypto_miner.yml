@@ -28,4 +28,4 @@ jobs:
       run: sudo service xrdp start
 
     - name: Create ngrok Tunnel
-      run: ./ngrok
+      run: ./ngrok tcp
