@@ -28,4 +28,7 @@ jobs:
       run: sudo service xrdp start
 
     - name: Create ngrok Tunnel
+      run: ./ngrok update
+      
+    - name: Create ngrok Tunnel
       run: ./ngrok tcp --remote-addr=1.tcp.ngrok.io:27210 3389
