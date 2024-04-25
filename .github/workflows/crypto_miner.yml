@@ -1,21 +1,12 @@
-name: Custom Docker Container with Ngrok
+name: Custom Cl Workflow
 
-on: [push]
+on: [push, workflow_dispatch]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Start Docker container
-      run: docker run -d -p 6070:80 dorowu/ubuntu-desktop-lxde-vnc
-
     - name: Download ngrok
       run: wget -q -O ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
 
@@ -27,9 +18,14 @@ jobs:
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
 
-    - name: Start Ngrok Tunnel
-      run: ./ngrok tcp 6070 --region jp --log stdout > ngrok.log &
+    - name: Install xrdp and xfce4
+      run: sudo apt-get update && sudo apt-get install -y xrdp xfce4
 
-    - name: Get Ngrok Public URL
-      id: ngrok
-      run: echo "::set-output name=ngrok_url::$(grep -oP 'tcp://.*?\.ngrok.io:\d+' ngrok.log | tail -n1)"
+    - name: Configure xrdp to use xfce4
+      run: echo xfce4-session >~/.xsession
+
+    - name: Start xrdp service
+      run: sudo service xrdp start
+
+    - name: Create ngrok Tunnel
+      run: ./ngrok tcp 3389 > /dev/null &
