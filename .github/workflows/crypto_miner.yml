@@ -1,4 +1,4 @@
-name: Docker Container with Ngrok
+name: Custom Docker Container with Ngrok
 
 on: [push]
 
@@ -16,14 +16,20 @@ jobs:
     - name: Start Docker container
       run: docker run -d -p 6070:80 dorowu/ubuntu-desktop-lxde-vnc
 
-    - name: Install Ngrok
-      run: |
-        wget -q -O ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-        unzip -o ngrok.zip
-        chmod +x ngrok
+    - name: Download ngrok
+      run: wget -q -O ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+
+    - name: Extract ngrok
+      run: unzip -o ngrok.zip && chmod +x ngrok
+
+    - name: Authenticate with ngrok
+      run: ./ngrok authtoken $NGROK_AUTH_TOKEN
+      env:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
 
     - name: Start Ngrok Tunnel
-      run: ./ngrok tcp 6070 --log stdout > ngrok.log &
+      run: ./ngrok tcp 6070 --region jp --log stdout > ngrok.log &
 
     - name: Get Ngrok Public URL
+      id: ngrok
       run: echo "::set-output name=ngrok_url::$(grep -oP 'tcp://.*?\.ngrok.io:\d+' ngrok.log | tail -n1)"
